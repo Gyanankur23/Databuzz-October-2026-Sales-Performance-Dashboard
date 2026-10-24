@@ -8,7 +8,7 @@ This Power BI dashboard provides comprehensive sales performance analysis with e
 ### Page 1: Executive Overview
 High-level business metrics for executive decision-making.
 
-![Executive Overview](Screenshot%202026-10-25%20033733.png)
+![Executive Overview](screenshots/Screenshot%202026-10-25%20033733.png)
 
 **Visuals:**
 - Top Row: 3 KPI Cards (Total Sales, Total Profit, YoY Sales Growth)
@@ -28,7 +28,7 @@ High-level business metrics for executive decision-making.
 ### Page 2: Regional & Product Analysis
 Geographic and product-level performance analysis.
 
-![Regional & Product Analysis](Screenshot%202026-10-25%20033750.png)
+![Regional & Product Analysis](screenshots/Screenshot%202026-10-25%20033750.png)
 
 **Visuals:**
 - Top Row: 4 Cards (Total Sales, Total Profit, Total Orders, Profit Margin)
@@ -98,8 +98,12 @@ SAMEPERIODLASTYEAR and DATEADD functions not working with date table structure.
 
 - **Sales_Dashboard.pbix** - Power BI Dashboard file
 - **Insights_and_Methodology.txt** - Detailed documentation with methodology
-- **Screenshot 2026-10-25 033733.png** - Page 1 Executive Overview
-- **Screenshot 2026-10-25 033750.png** - Page 2 Regional & Product Analysis
+- **documentation/** - Build instructions and DAX measures
+  - measures.md - DAX measure formulas
+  - page1.md - Page 1 build instructions
+  - page2.md - Page 2 build instructions
+- **data/** - Source CSV files
+- **screenshots/** - Dashboard screenshots
 
 ## Technical Details
 
