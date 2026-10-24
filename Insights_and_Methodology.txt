@@ -1,0 +1,203 @@
+================================================================================
+SALES DASHBOARD - INSIGHTS AND METHODOLOGY
+================================================================================
+Project: Power BI Sales Dashboard
+Date: October 2026
+Challenge: Databuzz Ltd October 2026 Power BI Challenge
+
+================================================================================
+DATA SOURCES
+================================================================================
+GitHub Repository: https://github.com/chiranjeevikudupudi/Power-BI-Projects/tree/main/007%20Sales%20Dashboard/001_Datasets
+
+Files Downloaded:
+- 001 Sales Data 2020.csv
+- 002 Sales Data 2021.csv
+- 003 Sales Data 2022.csv
+- 004 Customer Lookup.csv
+- 005 Calendar Lookup.csv
+- 006 Product Lookup.csv
+- 007 Product Categories Lookup.csv
+- 008 Product Subcategories Lookup.csv
+- 009 Returns Data.csv
+- 010 Territory Lookup.csv
+
+================================================================================
+DATA MODEL - STAR SCHEMA
+================================================================================
+Fact Tables:
+- Fact_Sales: Combined sales data from 2020, 2021, 2022
+- Fact_Returns: Returns data
+
+Dimension Tables:
+- Dim_Customer: Customer information
+- Dim_Date (Dim_Calendar): Date dimension for time analysis
+- Dim_Product: Product details with pricing
+- Dim_ProductCategory: Product categories
+- Dim_ProductSubcategory: Product subcategories
+- Dim_Territory: Geographic/territory information
+
+Measures Table:
+- Measures: Dedicated table for DAX measures
+
+================================================================================
+RELATIONSHIPS
+================================================================================
+- Dim_Date[Date] → Fact_Sales[OrderDate] (1:*, Both)
+- Dim_Date[Date] → Fact_Returns[ReturnDate] (1:*, Both)
+- Dim_Product[ProductKey] → Fact_Sales[ProductKey] (1:*, Both)
+- Dim_Customer[CustomerKey] → Fact_Sales[CustomerKey] (1:*, Both)
+- Dim_Territory[TerritoryKey] → Fact_Sales[TerritoryKey] (1:*, Both)
+- Dim_ProductCategory[ProductCategoryKey] → Dim_Product[ProductCategoryKey] (1:*, Both)
+- Dim_ProductSubcategory[ProductSubcategoryKey] → Dim_Product[ProductSubcategoryKey] (1:*, Both)
+
+All relationships set to Both cross-filter direction for bidirectional filtering.
+Dim_Date marked as Date Table with Date column.
+
+================================================================================
+DAX MEASURES
+================================================================================
+
+1. Total Sales
+   Formula: SUMX(Fact_Sales, Fact_Sales[OrderQuantity] * CALCULATE(MAX(Dim_Product[ProductPrice]), FILTER(Dim_Product, Dim_Product[ProductKey] = EARLIER(Fact_Sales[ProductKey]))))
+   Purpose: Total revenue from sales
+   Format: Currency
+
+2. Total Cost
+   Formula: SUMX(Fact_Sales, Fact_Sales[OrderQuantity] * CALCULATE(MAX(Dim_Product[ProductCost]), FILTER(Dim_Product, Dim_Product[ProductKey] = EARLIER(Fact_Sales[ProductKey]))))
+   Purpose: Total cost of goods sold
+   Format: Currency
+
+3. Total Profit
+   Formula: [Total Sales] - [Total Cost]
+   Purpose: Gross profit
+   Format: Currency
+
+4. Profit Margin
+   Formula: DIVIDE([Total Profit], [Total Sales])
+   Purpose: Profitability percentage
+   Format: Percentage
+
+5. YoY Sales Growth
+   Formula: 
+   VAR CurrentYear = YEAR(MAX(Dim_Calendar[Date]))
+   VAR CurrentYearSales = [Total Sales]
+   VAR PreviousYearSales = CALCULATE([Total Sales], YEAR(Dim_Calendar[Date]) = CurrentYear - 1, ALL(Dim_Calendar))
+   RETURN DIVIDE(CurrentYearSales - PreviousYearSales, PreviousYearSales)
+   Purpose: Year-over-year sales growth rate
+   Format: Percentage
+   Note: Uses YEAR() function on Date column for reliable calculation
+
+6. Total Orders
+   Formula: DISTINCTCOUNT(Fact_Sales[OrderNumber])
+   Purpose: Count of unique orders
+   Format: Whole number
+
+7. Return Rate
+   Formula: 
+   VAR TotalReturns = SUM(Dim_Returns[ReturnQuantity])
+   VAR TotalOrders = [Total Orders]
+   RETURN DIVIDE(TotalReturns, TotalOrders)
+   Purpose: Percentage of items returned
+   Format: Percentage
+
+8. Average Order Value
+   Formula: DIVIDE([Total Sales], [Total Orders])
+   Purpose: Average revenue per order
+   Format: Currency
+
+9. AOV Target
+   Formula: 950
+   Purpose: Target for Average Order Value (based on current performance of ~$850)
+   Format: Currency
+
+10. AOV KPI
+    Formula: CALCULATE(DIVIDE([Total Sales], [Total Orders]), ALLSELECTED(Dim_Calendar))
+    Purpose: AOV measure optimized for KPI visualization with trend axis
+    Format: Currency
+
+================================================================================
+KEY CHALLENGES & SOLUTIONS
+================================================================================
+
+Challenge 1: Total Sales and Total Cost Calculation
+Issue: ProductPrice and ProductCost columns exist in Dim_Product, not Fact_Sales
+Solution: Used CALCULATE with MAX and FILTER to look up values per row context
+Alternative considered: Power Query merge (rejected due to complexity)
+
+Challenge 2: KPI Visual Showing Blank
+Issue: Average Order Value measure returned BLANK when used with trend axis
+Solution: Created AOV KPI measure with ALLSELECTED(Dim_Calendar) to remove problematic date filter context
+
+Challenge 3: YoY Sales Growth Showing 0%
+Issue: SAMEPERIODLASTYEAR and DATEADD functions not working with date table
+Solution: Used YEAR() function on Date column with explicit year comparison
+Result: Now showing 171.98% growth (accurate based on multi-year data)
+
+Challenge 4: Null Values in Date Table
+Solution: Removed null rows from Dim_Date in Power Query before creating relationships
+
+================================================================================
+DASHBOARD PAGES
+================================================================================
+
+Page 1: Executive Overview
+Purpose: High-level business metrics for executive decision-making
+
+Visuals:
+- Top Row: 3 KPI Cards (Total Sales, Total Profit, YoY Sales Growth)
+- Middle Left: Line Chart - Sales Trend Over Time
+- Middle Right: Bar Chart - Top 5 Products by Profit
+- Bottom Left: KPI - Average Order Value vs Target ($950)
+- Bottom Right: Line Chart - Orders Trend Over Time
+- Right Side: Slicers (Year, Region)
+
+Page 2: Regional & Product Analysis
+Purpose: Geographic and product-level performance analysis
+
+Visuals:
+- Top Row: 4 Cards (Total Sales, Total Profit, Total Orders, Profit Margin)
+- Bottom Left: Bar Chart - Sales by Territory Group
+- Bottom Right: Donut Chart - Sales by Product Category
+- Right Side: Slicers (Category, Country)
+
+================================================================================
+UI/UX CONSIDERATIONS
+================================================================================
+- Consistent color theme: Navy Blue, White, Light Gray
+- White background for clean professional look
+- Proper spacing between visuals
+- Data labels on charts for clarity
+- Conditional formatting for profit margin (green > 30%, red < 20%)
+- Slicers positioned on right side for easy filtering
+- KPIs formatted with appropriate icons and colors
+
+================================================================================
+BUSINESS INSIGHTS
+================================================================================
+
+1. Strong Growth: 171.98% YoY sales growth indicates significant business expansion
+2. Healthy Margins: 42.08% profit margin suggests strong pricing strategy
+3. AOV Opportunity: Current AOV ($850) below target ($950) - opportunity for upselling
+4. Product Performance: Top products identified by profit contribution
+5. Regional Analysis: Territory and category slicers enable granular performance analysis
+
+================================================================================
+SUBMISSION FILES
+================================================================================
+1. Sales_Dashboard.pbix - Power BI Dashboard file
+2. Insights_and_Methodology.txt - This documentation file
+
+Submit to: chiranjeevi.kudupudi@databuzzltd.com
+
+================================================================================
+TECHNICAL NOTES
+================================================================================
+- Power BI Desktop used for development
+- Star schema implemented for optimal performance
+- Bidirectional relationships for flexible filtering
+- Date table properly marked for time intelligence functions
+- Measures use CALCULATE, FILTER, and EARLIER for complex lookups
+- ALLSELECTED used to handle KPI visualization context issues
+
+================================================================================
