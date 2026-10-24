@@ -23,7 +23,7 @@ High-level business metrics for executive decision-making.
 - Total Profit: $10.51M
 - Profit Margin: 42.08%
 - YoY Growth: 171.98%
-- Average Order Value: ~$850 (Target: $950)
+- Average Order Value: ~$992 (Target: $950)
 
 ### Page 2: Regional & Product Analysis
 Geographic and product-level performance analysis.
