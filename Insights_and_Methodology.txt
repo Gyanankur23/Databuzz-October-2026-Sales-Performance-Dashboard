@@ -188,6 +188,8 @@ SUBMISSION FILES
 1. Sales_Dashboard.pbix - Power BI Dashboard file
 2. Insights_and_Methodology.txt - This documentation file
 
+GitHub Repository: https://github.com/Gyanankur23/Databuzz-October-2026-Sales-Performance-Dashboard
+
 Submit to: chiranjeevi.kudupudi@databuzzltd.com
 
 ================================================================================
